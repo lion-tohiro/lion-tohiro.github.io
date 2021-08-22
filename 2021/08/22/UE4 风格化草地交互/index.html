@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","version":"8.7.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="​        这篇文章记录了学习制作风格化草地以及草地的交互的过程，教程来源于YouTube（看了许多个视频拼凑出来的），之后有时间会继续研究并完善。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UE4风格化草地制作与基于PivotPainter的草地交互">
+<meta property="og:url" content="http://example.com/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/index.html">
+<meta property="og:site_name" content="tohiro&#39;s Blog">
+<meta property="og:description" content="​        这篇文章记录了学习制作风格化草地以及草地的交互的过程，教程来源于YouTube（看了许多个视频拼凑出来的），之后有时间会继续研究并完善。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/HighresScreenshot00000.png">
+<meta property="og:image" content="http://example.com/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/pic.wenwo.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg">
+<meta property="og:image" content="http://example.com/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/image-20210822152846013.png">
+<meta property="og:image" content="http://example.com/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/image-20210822153223350.png">
+<meta property="og:image" content="http://example.com/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/image-20210822153713711.png">
+<meta property="og:image" content="http://example.com/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/image-20210822154534484.png">
+<meta property="og:image" content="http://example.com/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/image-20210822154629824.png">
+<meta property="og:image" content="http://example.com/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/image-20210822161905480.png">
+<meta property="og:image" content="http://example.com/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/image-20210822162005741.png">
+<meta property="og:image" content="http://example.com/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/image-20210822164126303.png">
+<meta property="og:image" content="http://example.com/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/HighresScreenshot00001.png">
+<meta property="og:image" content="http://example.com/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/%E5%8A%A8%E7%94%BB1.gif">
+<meta property="article:published_time" content="2021-08-22T07:02:26.455Z">
+<meta property="article:modified_time" content="2021-08-22T09:06:06.059Z">
+<meta property="article:author" content="Chen Yuren">
+<meta property="article:tag" content="UE4">
+<meta property="article:tag" content="效果制作">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/HighresScreenshot00000.png">
+
+
+<link rel="canonical" href="http://example.com/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/","path":"2021/08/22/UE4 风格化草地交互/","title":"UE4风格化草地制作与基于PivotPainter的草地交互"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>UE4风格化草地制作与基于PivotPainter的草地交互 | tohiro's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">tohiro's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Base-Color"><span class="nav-number">1.</span> <span class="nav-text">Base Color</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A3%8E%E7%9A%84%E6%95%88%E6%9E%9C"><span class="nav-number">2.</span> <span class="nav-text">风的效果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%A4%E4%BA%92"><span class="nav-number">3.</span> <span class="nav-text">交互</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%9D%E5%A4%96"><span class="nav-number">4.</span> <span class="nav-text">额外</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E7%BB%88%E6%95%88%E6%9E%9C"><span class="nav-number">5.</span> <span class="nav-text">最终效果</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Chen Yuren</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Chen Yuren">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="tohiro's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          UE4风格化草地制作与基于PivotPainter的草地交互
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-08-22 15:02:26 / 修改时间：17:06:06" itemprop="dateCreated datePublished" datetime="2021-08-22T15:02:26+08:00">2021-08-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/UE4/" itemprop="url" rel="index"><span itemprop="name">UE4</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>​        这篇文章记录了学习制作风格化草地以及草地的交互的过程，教程来源于YouTube（看了许多个视频拼凑出来的），之后有时间会继续研究并完善。</p>
+<p><img src="/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/HighresScreenshot00000.png"></p>
+<span id="more"></span>
+
+<p>​        这里主要使用的是UE4的landscape和foliage模块。主要讲一下制作草地材质的思路。</p>
+<h3 id="Base-Color"><a href="#Base-Color" class="headerlink" title="Base Color"></a>Base Color</h3><p>​        分析一下卡通中的草地，例如下面这张图（来自宫崎骏的《起风了》，图片来源于网络），我们可以发现在卡通中并不会特意将草地的阴影绘制出来，而是通过颜色的渐变和多种颜色的混合分布来表现层次感，并且有些动画中为了表现和风吹拂的感觉，还会给风吹拂过的草地加上更加鲜艳的颜色（如饱和度较高、较为明亮的黄绿色等）。因此要做的就有渐变、颜色的混合分布、风吹拂的颜色变化三个部分。</p>
+<p><img src="/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/pic.wenwo.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg" alt="起风了"></p>
+<p>​        前两个相对来说简单一些。渐变我们可以使用UV来做，也就是提取V值作为lerp的alpha值来将两种颜色进行插值（完成上下渐变），我们可以使用Power或者减和除来控制渐变的范围。</p>
+<p><img src="/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/image-20210822152846013.png" alt="渐变"></p>
+<p>​        而对于多种颜色的分布，则可以用一张mask贴图来完成。我们获取世界空间的坐标来采样这张贴图，然后采样的值作为lerp的alpha值进行颜色的插值。</p>
+<p><img src="/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/image-20210822153223350.png"></p>
+<p>​        风的“颜色”思路也是类似的，用一张mask来表示风掠过的部分，在这部分对颜色进行插值运算。由于风是流动的，我们要做一个UV动画。同样也是获取世界位置坐标，然后同panner节点来做UV的平移。</p>
+<p><img src="/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/image-20210822153713711.png"></p>
+<h3 id="风的效果"><a href="#风的效果" class="headerlink" title="风的效果"></a>风的效果</h3><p>​        UE4为我们提供了一个用于计算草地的风吹效果的节点SimpleGrassWind，感觉就是封装好的顶点平移。（感觉也可以用flowmap来做，下回试试）</p>
+<p>​        这里就很简单地把节点连上就完事了。最后把结果连到WPO上。但如果没有进行额外的处理，我们会发现整株草都在扭动，这显然是不合理的嘛。因此可以对模型顶点色进行修改，用顶点色作为mask来控制不同部分的顶点的偏移。</p>
+<p><img src="/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/image-20210822154534484.png" alt="风"></p>
+<p><img src="/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/image-20210822154629824.png" alt="顶点色"></p>
+<h3 id="交互"><a href="#交互" class="headerlink" title="交互"></a>交互</h3><p>​        这里使用的是Pivot Painter。主要工作还是在于模型的处理。我在Blender里创建了草的模型，然后用了Pivot Painter插件创建2UV和需要的贴图。</p>
+<p>​        Pivot Painter其实是将模型每个子部分的枢轴和旋转信息存储了下来，并记录在了贴图里，然后引擎通过获取贴图里的信息结合2UV来还原处枢轴，并完成子部分的旋转等操作。</p>
+<p>​        在Blender中如何制作这样一个资产的相关的文档在这个链接中有：<a target="_blank" rel="noopener" href="https://docs.google.com/document/d/1DhVo4-iW6CAV-X9lzB5y0p_SSlAY52bKLyPuhrOYLjI/edit%E3%80%82%E8%BF%99%E9%87%8C%E9%9D%A2%E8%BF%98%E6%9C%89%E4%BB%8B%E7%BB%8D%E6%A0%91%E7%AD%89%E5%85%B6%E4%BB%96%E6%9B%B4%E5%8A%A0%E5%A4%8D%E6%9D%82%E7%9A%84%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%EF%BC%8C%E4%B9%8B%E5%90%8E%E6%9C%89%E7%A9%BA%E4%BC%9A%E7%BB%A7%E7%BB%AD%E7%A0%94%E7%A9%B6%E4%B8%80%E4%B8%8B%E3%80%82">https://docs.google.com/document/d/1DhVo4-iW6CAV-X9lzB5y0p_SSlAY52bKLyPuhrOYLjI/edit。这里面还有介绍树等其他更加复杂的模型的处理方法，之后有空会继续研究一下。</a></p>
+<p>*这里记一下，制作模型过程中踩的坑。第一个是修改法线，直接制作出来没修改法线导出来放到引擎里颜色是不平滑的，这里强行让法线全部往上了。第二个是模型的尺度（单位），不改成Metric+Unit Scale = 0.01就没法用PivotPainter的插件，大概是为了跟UE4统一吧。还有就是模型空间的枢轴的X轴要朝上，这个文档里有提到，很重要。</p>
+<p>​        制作完成后导出的贴图有两张：</p>
+<p>![PivotPainter贴图](UE4 风格化草地交互.assets/image-20210822155732055.png)</p>
+<p>​        我们依然需要根据文档去更改导入设置。通过这两张贴图的命名其实可以知道它们的用处。左边是一张EXR格式的HDR贴图，其中rgb通道存放的是每个子对象枢轴的中心坐标，a通道记录了层级关系（但草的模型其实没有层级关系，所以这张贴图的a通道其实没有啥有用的东西）。右边的是一张PNG格式的贴图，rgb通道记录了模型的枢轴的X轴方向，a通道记录的是X轴方向的延伸长度（好像在这里也用不上哈）。要注意的是，这里记录的向量也好、坐标也好都是模型空间下的。</p>
+<p>​        另一方面，我们需要一个简单的蓝图来实时获取Player或者其他的actor的坐标（与地面接触位置），然后记录到MPC中方便在材质编辑器里获取。这里还获取了角色胶囊体的半径，记录在a通道里，用来作为交互的范围。</p>
+<p><img src="/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/image-20210822161905480.png" alt="蓝图连连看获取角色脚的坐标"></p>
+<p>​        素材都准备好就开始连连看。首先就是采样这两张贴图，记得用2UV采样。然后我们将拿到的Vector转换到世界空间下。ms_PivotPainter2_DecodeAxisVector这个节点其实只是做了个左边转换和归一化。我们将枢轴位置和角色位置相减，然后与x轴方向做个叉积，其实就能算出旋转轴的方向了。然后用SphereMask来算一个有圆形过渡的旋转角度。还可以用这个节点做点其他的，比如物体的自转啥的，比用蓝图ticks来做会省一些。</p>
+<p><img src="/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/image-20210822162005741.png"></p>
+<h3 id="额外"><a href="#额外" class="headerlink" title="额外"></a>额外</h3><p>​        额外做了个地平面的弯曲（类似动森的那个）。也很简单，根据视线和顶点位置之间的距离来作为顶点偏移的z值。</p>
+<p><img src="/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/image-20210822164126303.png"></p>
+<p><img src="/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/HighresScreenshot00001.png"></p>
+<h3 id="最终效果"><a href="#最终效果" class="headerlink" title="最终效果"></a>最终效果</h3><p><img src="/2021/08/22/UE4%20%E9%A3%8E%E6%A0%BC%E5%8C%96%E8%8D%89%E5%9C%B0%E4%BA%A4%E4%BA%92/%E5%8A%A8%E7%94%BB1.gif"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/UE4/" rel="tag"># UE4</a>
+              <a href="/tags/%E6%95%88%E6%9E%9C%E5%88%B6%E4%BD%9C/" rel="tag"># 效果制作</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/08/22/UE4%20Rendering%E7%B3%BB%E5%88%97%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0/" rel="prev" title="UE4 Rendering系列教程笔记">
+                  <i class="fa fa-chevron-left"></i> UE4 Rendering系列教程笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chen Yuren</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
